@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>四季L3B英文複習小幫手</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap');
+        body {
+            font-family: 'Nunito', 'Noto Sans TC', sans-serif;
+            background-color: #f0fdf4; /* Light green background */
+        }
+        .bounce-click:active {
+            transform: scale(0.95);
+        }
+        .hidden-element {
+            display: none !important;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+
+    <!-- 主容器 -->
+    <div id="app-container" class="bg-white rounded-3xl shadow-xl w-full max-w-lg overflow-hidden border-4 border-green-400">
+        
+        <!-- 標題列 -->
+        <div class="bg-green-400 text-white text-center py-4 relative">
+            <button id="btn-home-icon" class="absolute left-4 top-4 text-2xl hidden-element hover:scale-110 transition" onclick="goHome()">🏠</button>
+            <h1 class="text-2xl sm:text-3xl font-black tracking-wide">🌟 四季L3B英文複習小幫手 🌟</h1>
+        </div>
+
+        <!-- 內容區 -->
+        <div class="p-6 md:p-8 min-h-[400px] flex flex-col justify-center">
+
+            <!-- 畫面 1: 首頁 (選擇單字或短句) -->
+            <div id="view-home" class="flex flex-col gap-6 text-center">
+                <div class="bg-blue-100 text-blue-800 p-3 rounded-xl font-bold text-lg border-2 border-blue-300">
+                    📅 本週進度：<span id="current-week-display" class="text-xl text-blue-600">計算中...</span>
+                </div>
+                <h2 class="text-2xl font-bold text-gray-700 mb-2">你想複習什麼呢？</h2>
+                <button onclick="selectMode('word')" class="bounce-click bg-blue-500 hover:bg-blue-600 text-white text-2xl font-bold py-6 px-4 rounded-2xl shadow-[0_8px_0_rgb(37,99,235)] transition-all hover:-translate-y-1">
+                    🅰️ 單字 (Vocabulary)
+                </button>
+                <button onclick="selectMode('sentence')" class="bounce-click bg-yellow-400 hover:bg-yellow-500 text-gray-800 text-2xl font-bold py-6 px-4 rounded-2xl shadow-[0_8px_0_rgb(202,138,4)] transition-all hover:-translate-y-1">
+                    💬 短句 (Sentences)
+                </button>
+            </div>
+
+            <!-- 畫面 2: 選擇 Week -->
+            <div id="view-select-week" class="hidden-element flex flex-col h-full">
+                <h2 id="week-title" class="text-2xl font-bold text-gray-700 mb-4 text-center">請選擇週數</h2>
+                <div id="week-grid" class="grid grid-cols-2 md:grid-cols-3 gap-3 overflow-y-auto max-h-[300px] p-2">
+                    <!-- Week 按鈕會由 JS 動態生成 -->
+                </div>
+            </div>
+
+            <!-- 畫面 3: 選擇出題方式 (僅限單字) -->
+            <div id="view-select-type" class="hidden-element flex flex-col gap-6 text-center">
+                <h2 class="text-2xl font-bold text-gray-700 mb-2">請選擇出題方式</h2>
+                <button onclick="startWordQuiz('voice')" class="bounce-click bg-purple-500 hover:bg-purple-600 text-white text-xl font-bold py-5 px-4 rounded-2xl shadow-[0_6px_0_rgb(147,51,234)] transition-all">
+                    🔊 聽語音猜單字
+                </button>
+                <button onclick="startWordQuiz('translation')" class="bounce-click bg-orange-500 hover:bg-orange-600 text-white text-xl font-bold py-5 px-4 rounded-2xl shadow-[0_6px_0_rgb(234,88,12)] transition-all">
+                    🇹🇼 看中文猜單字
+                </button>
+            </div>
+
+            <!-- 畫面 4: 單字測驗進行中 -->
+            <div id="view-quiz-word" class="hidden-element flex flex-col items-center text-center h-full justify-between">
+                <div class="w-full flex justify-between text-gray-500 font-bold mb-4">
+                    <span id="word-progress">1 / 15</span>
+                    <span id="word-week-display">Week 1</span>
+                </div>
+
+                <!-- 題目區 -->
+                <div id="word-question-area" class="flex-grow flex flex-col items-center justify-center w-full min-h-[150px]">
+                    <!-- 語音模式 UI -->
+                    <button id="btn-play-voice" class="hidden-element text-6xl hover:scale-110 transition-transform mb-4" onclick="replayAudio()">🔊</button>
+                    <!-- 翻譯模式 UI -->
+                    <h3 id="text-translation" class="hidden-element text-4xl font-black text-gray-800 mb-4">蘋果</h3>
+                </div>
+
+                <!-- 解答區 (初始隱藏) -->
+                <div id="word-answer-area" class="hidden-element w-full bg-green-100 p-6 rounded-2xl mb-6 border-2 border-green-300">
+                    <h2 id="ans-english" class="text-4xl font-black text-green-700 mb-2">Apple</h2>
+                    <h3 id="ans-chinese" class="text-2xl font-bold text-gray-600">蘋果</h3>
+                </div>
+
+                <!-- 控制按鈕 -->
+                <button id="btn-show-answer" onclick="showWordAnswer()" class="bounce-click w-full bg-blue-500 hover:bg-blue-600 text-white text-2xl font-bold py-4 rounded-xl shadow-[0_6px_0_rgb(37,99,235)]">
+                    👀 看解答
+                </button>
+                <button id="btn-next-word" onclick="nextWordQuestion()" class="hidden-element bounce-click w-full bg-green-500 hover:bg-green-600 text-white text-2xl font-bold py-4 rounded-xl shadow-[0_6px_0_rgb(22,163,74)]">
+                    下一題 ➡️
+                </button>
+                <button onclick="goHome()" class="mt-4 text-gray-400 font-bold hover:text-gray-600 underline">
+                    🔙 放棄測驗，回主畫面
+                </button>
+            </div>
+
+            <!-- 畫面 5: 短句測驗進行中 -->
+            <div id="view-quiz-sentence" class="hidden-element flex flex-col items-center text-center h-full justify-between">
+                <div class="w-full flex justify-between text-gray-500 font-bold mb-4">
+                    <span id="sentence-progress">1 / 3</span>
+                    <span id="sentence-week-display">Week 1</span>
+                </div>
+
+                <div class="flex-grow flex flex-col items-center justify-center w-full">
+                    <div class="bg-yellow-100 p-6 rounded-2xl border-2 border-yellow-300 w-full relative">
+                        <button class="absolute top-2 right-2 text-2xl hover:scale-110" onclick="replayAudio()">🔊</button>
+                        <h2 id="sentence-text" class="text-3xl font-bold text-gray-800 mt-4 leading-relaxed">This is a sentence.</h2>
+                    </div>
+                </div>
+
+                <button id="btn-next-sentence" onclick="nextSentenceQuestion()" class="bounce-click mt-8 w-full bg-green-500 hover:bg-green-600 text-white text-2xl font-bold py-4 rounded-xl shadow-[0_6px_0_rgb(22,163,74)]">
+                    下一句 ➡️
+                </button>
+                <button onclick="goHome()" class="mt-4 text-gray-400 font-bold hover:text-gray-600 underline">
+                    🔙 放棄測驗，回主畫面
+                </button>
+            </div>
+
+            <!-- 畫面 6: 測驗完成 -->
+            <div id="view-result" class="hidden-element flex flex-col items-center justify-center text-center gap-6 h-full">
+                <div class="text-6xl">🎉</div>
+                <h2 class="text-3xl font-black text-gray-800">太棒了！完成啦！</h2>
+                
+                <button onclick="restartCurrentQuiz()" class="bounce-click w-full bg-blue-500 hover:bg-blue-600 text-white text-xl font-bold py-4 rounded-xl shadow-[0_6px_0_rgb(37,99,235)]">
+                    🔄 再來一次
+                </button>
+                <button onclick="goHome()" class="bounce-click w-full bg-gray-400 hover:bg-gray-500 text-white text-xl font-bold py-4 rounded-xl shadow-[0_6px_0_rgb(156,163,175)]">
+                    🏠 回到主畫面
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- 語音發聲物件 -->
+    <script>
+        // --- 資料庫 ---
+        const wordData = {
+            "Week 1": [
+                { en: "vacation", zh: "假期" }, { en: "beach", zh: "海灘" }, { en: "ocean", zh: "海洋" },
+                { en: "buy (ice cream)", zh: "買(冰淇淋)" }, { en: "(go) surfing", zh: "(去)衝浪" },
+                { en: "(go on a) boat trip", zh: "(去)遊船" }, { en: "(have a) picnic", zh: "(去)野餐" },
+                { en: "campsite", zh: "露營地" }, { en: "sand", zh: "沙子" }, { en: "dolphin", zh: "海豚" },
+                { en: "seahorse", zh: "海馬" }, { en: "starfish", zh: "海星" }, { en: "baby", zh: "嬰兒" },
+                { en: "elevator", zh: "電梯" }, { en: "lady", zh: "女士" }
+            ],
+            "Week 4": [
+                { en: "pinch", zh: "捏" }, { en: "infinitive", zh: "不定詞" }, { en: "storm", zh: "暴風雨" },
+                { en: "disaster", zh: "災難" }, { en: "rescue", zh: "救援" }, { en: "tent", zh: "帳篷" },
+                { en: "competition", zh: "比賽" }, { en: "collect", zh: "收集" }, { en: "conservation", zh: "保育" },
+                { en: "fish tank", zh: "魚缸" }, { en: "ice cube", zh: "冰塊" }, { en: "absorb", zh: "吸收" },
+                { en: "she", zh: "她" }, { en: "tiger", zh: "老虎" }, { en: "child", zh: "小孩" }
+            ],
+            "Week 5": [
+                { en: "climate change", zh: "氣候變遷" }, { en: "equator", zh: "赤道" }, { en: "heat", zh: "熱量/加熱" },
+                { en: "melt", zh: "融化" }, { en: "sink", zh: "下沉" }, { en: "rise", zh: "上升" },
+                { en: "bottom", zh: "底部" }, { en: "prediction", zh: "預測" }, { en: "observation", zh: "觀察" },
+                { en: "invisible", zh: "看不見的" }, { en: "remove", zh: "移除" }, { en: "poor", zh: "貧窮的/可憐的" },
+                { en: "hotel", zh: "旅館" }, { en: "uniform", zh: "制服" }, { en: "music", zh: "音樂" }
+            ],
+            "Week 7": [
+                { en: "shopping list", zh: "購物清單" }, { en: "broccoli", zh: "青花菜" }, { en: "carrot", zh: "胡蘿蔔" },
+                { en: "grocery store", zh: "雜貨店" }, { en: "supermarket", zh: "超市" }, { en: "department store", zh: "百貨公司" },
+                { en: "butcher shop", zh: "肉店" }, { en: "bakery", zh: "麵包店" }, { en: "sales assistant", zh: "售貨員" },
+                { en: "cash register", zh: "收銀機" }, { en: "customer", zh: "顧客" }, { en: "stall", zh: "攤位" },
+                { en: "panda", zh: "熊貓" }, { en: "gorilla", zh: "大猩猩" }, { en: "umbrella", zh: "雨傘" }
+            ],
+            "Week 8": [
+                { en: "sugar", zh: "糖" }, { en: "some", zh: "一些" }, { en: "any", zh: "任何" },
+                { en: "present", zh: "禮物" }, { en: "design", zh: "設計" }, { en: "common", zh: "常見的" },
+                { en: "wrapper", zh: "包裝紙" }, { en: "product", zh: "產品" }, { en: "logo", zh: "商標" },
+                { en: "toothpaste", zh: "牙膏" }, { en: "shampoo", zh: "洗髮精" }, { en: "sneakers", zh: "運動鞋" },
+                { en: "chicken", zh: "雞肉" }, { en: "lemon", zh: "檸檬" }, { en: "surprise", zh: "驚喜" }
+            ],
+            "Week 9": [
+                { en: "a lot of", zh: "許多的" }, { en: "much", zh: "許多(不可數)" }, { en: "many", zh: "許多(可數)" },
+                { en: "skyscraper", zh: "摩天大樓" }, { en: "desert", zh: "沙漠" }, { en: "electronics", zh: "電子產品" },
+                { en: "fountain", zh: "噴泉" }, { en: "material", zh: "材料" }, { en: "method", zh: "方法" },
+                { en: "magazine", zh: "雜誌" }, { en: "collage", zh: "拼貼畫" }, { en: "create", zh: "創造" },
+                { en: "monkey", zh: "猴子" }, { en: "son", zh: "兒子" }, { en: "honey", zh: "蜂蜜" }
+            ],
+            "Week 11": [
+                { en: "warrior", zh: "戰士" }, { en: "save", zh: "拯救" }, { en: "clean up", zh: "清理" },
+                { en: "recycle", zh: "回收" }, { en: "reduce", zh: "減少" }, { en: "reuse", zh: "重複使用" },
+                { en: "waste", zh: "浪費/廢棄物" }, { en: "plant", zh: "種植/植物" }, { en: "glass", zh: "玻璃" },
+                { en: "trash", zh: "垃圾" }, { en: "environment", zh: "環境" }, { en: "wildlife", zh: "野生動物" },
+                { en: "knife", zh: "刀" }, { en: "knee", zh: "膝蓋" }, { en: "wrong", zh: "錯誤的" }
+            ],
+            "Week 12": [
+                { en: "pollution", zh: "污染" }, { en: "deforestation", zh: "森林砍伐" }, { en: "population", zh: "人口" },
+                { en: "challenge", zh: "挑戰" }, { en: "prize", zh: "獎品" }, { en: "project", zh: "計畫" },
+                { en: "empty", zh: "空的" }, { en: "lot", zh: "許多/一塊地" }, { en: "sort", zh: "分類" },
+                { en: "shopping cart", zh: "購物車" }, { en: "nature", zh: "自然" }, { en: "garden", zh: "花園" },
+                { en: "lamb", zh: "小羊" }, { en: "comb", zh: "梳子" }, { en: "glove", zh: "手套" }
+            ],
+            "Week 13": [
+                { en: "pollute", zh: "污染" }, { en: "release", zh: "釋放" }, { en: "toxin", zh: "毒素" },
+                { en: "compost", zh: "堆肥" }, { en: "landfill", zh: "垃圾掩埋場" }, { en: "rot", zh: "腐爛" },
+                { en: "a slice of", zh: "一片" }, { en: "tub", zh: "桶/浴缸" }, { en: "container", zh: "容器" },
+                { en: "creature", zh: "生物" }, { en: "president", zh: "總統" }, { en: "protect", zh: "保護" },
+                { en: "rhino", zh: "犀牛" }, { en: "rhubarb", zh: "大黃" }, { en: "whistle", zh: "哨子" }
+            ],
+            "Week 18": [
+                { en: "job fair", zh: "就業博覽會" }, { en: "architect", zh: "建築師" }, { en: "bold", zh: "大膽的" },
+                { en: "vet", zh: "獸醫" }, { en: "farmer", zh: "農夫" }, { en: "police officer", zh: "警察" },
+                { en: "graphic designer", zh: "平面設計師" }, { en: "bank teller", zh: "銀行行員" }, { en: "computer programmer", zh: "電腦程式設計師" },
+                { en: "conservationist", zh: "保育人士" }, { en: "mechanic", zh: "技工" }, { en: "picture", zh: "圖片" },
+                { en: "programming", zh: "程式設計" }, { en: "treasure", zh: "寶藏" }, { en: "measure", zh: "測量" }
+            ],
+            "Week 19": [
+                { en: "scientist", zh: "科學家" }, { en: "midwife", zh: "助產士" }, { en: "plumber", zh: "水管工" },
+                { en: "paramedic", zh: "醫護人員" }, { en: "illustrator", zh: "插畫家" }, { en: "challenging", zh: "具挑戰性的" },
+                { en: "indoors", zh: "在室內" }, { en: "college", zh: "大學" }, { en: "application", zh: "申請/應用" },
+                { en: "creative", zh: "有創造力的" }, { en: "take care", zh: "照顧" }, { en: "first aid kit", zh: "急救箱" },
+                { en: "station", zh: "車站" }, { en: "television", zh: "電視" }, { en: "excursion", zh: "遠足" }
+            ],
+            "Week 20": [
+                { en: "good at", zh: "擅長" }, { en: "equipment", zh: "設備" }, { en: "record", zh: "記錄" },
+                { en: "microphone", zh: "麥克風" }, { en: "voice", zh: "聲音" }, { en: "sound", zh: "聲音" },
+                { en: "rubber band", zh: "橡皮筋" }, { en: "insect", zh: "昆蟲" }, { en: "pesticide", zh: "殺蟲劑" },
+                { en: "disagree", zh: "不同意" }, { en: "rainforest", zh: "雨林" }, { en: "ancient", zh: "古老的" },
+                { en: "dangerous", zh: "危險的" }, { en: "beautiful", zh: "美麗的" }, { en: "helpful", zh: "有幫助的" }
+            ]
+        };
+
+        const sentenceData = {
+            "Week 1": [
+                "We visited a beach with big rocks.",
+                "There were lots of big waves.",
+                "I went to Florida on vacation."
+            ],
+            "Week 4": [
+                "My brother bought ice cream for breakfast.",
+                "Did you go to the beach?",
+                "Yes, we did. No, we didn't."
+            ],
+            "Week 5": [
+                "We didn't have an eraser.",
+                "What did you do yesterday?",
+                "I swam in the ocean."
+            ],
+            "Week 7": [
+                "I have some rice and pasta.",
+                "I don't have any bread.",
+                "We have some bread."
+            ],
+            "Week 8": [
+                "Are there any bananas in the basket? Yes, there are.",
+                "There aren't any potatoes.",
+                "There isn't much pizza left."
+            ],
+            "Week 9": [
+                "Do you have any mangoes?",
+                "No, I don't have any mangoes.",
+                "I don't have any carrots."
+            ],
+            "Week 11": [
+                "What are you going to do?",
+                "I'm going to plant some plants.",
+                "They want to save the planet."
+            ],
+            "Week 12": [
+                "What's he going to do?",
+                "He isn't going to waste water.",
+                "My dad doesn't want to have a picnic."
+            ],
+            "Week 13": [
+                "What would you like to do every day?",
+                "I would like to reduce the water I use.",
+                "She'd like to protect wildlife."
+            ],
+            "Week 18": [
+                "She enjoys doing her job.",
+                "We don't like playing sports.",
+                "They love eating carrots."
+            ],
+            "Week 19": [
+                "Do you enjoy going shopping?",
+                "Yes, I do. No, I don't.",
+                "She doesn't enjoy going to the mall."
+            ],
+            "Week 20": [
+                "Why do you want to be an audio engineer?",
+                "Because I enjoy playing music.",
+                "Why is he studying English?"
+            ]
+        };
+
+        // --- 狀態管理 ---
+        let currentMode = null; // 'word' 或 'sentence'
+        let currentWeek = null; // 'Week 1', 'Week 4'...
+        let quizType = null; // 'voice' 或 'translation'
+        
+        let questions = [];
+        let currentIndex = 0;
+        let currentUtteranceText = ''; // 紀錄目前要念的字 (用來回放)
+        let currentUtteranceLang = 'en-US';
+
+        // --- 語音功能 ---
+        const synth = window.speechSynthesis;
+        function speak(text, lang = 'en-US') {
+            if (synth.speaking) synth.cancel(); // 停止先前的語音
+            
+            // 過濾括號內容以利發音 (例如: "(go) surfing" -> "surfing")
+            let textToSpeak = text;
+            if(lang === 'en-US') {
+                 textToSpeak = text.replace(/ *\([^)]*\) */g, " ").trim();
+            }
+
+            const utterThis = new SpeechSynthesisUtterance(textToSpeak);
+            utterThis.lang = lang;
+            utterThis.rate = 0.85; // 放慢一點讓小孩聽清楚
+            
+            currentUtteranceText = textToSpeak;
+            currentUtteranceLang = lang;
+            
+            synth.speak(utterThis);
+        }
+
+        function replayAudio() {
+            speak(currentUtteranceText, currentUtteranceLang);
+        }
+
+        // --- UI 控制 ---
+        function hideAllViews() {
+            const views = ['view-home', 'view-select-week', 'view-select-type', 'view-quiz-word', 'view-quiz-sentence', 'view-result'];
+            views.forEach(v => document.getElementById(v).classList.add('hidden-element'));
+        }
+
+        function showHomeIcon(show) {
+            const icon = document.getElementById('btn-home-icon');
+            if(show) icon.classList.remove('hidden-element');
+            else icon.classList.add('hidden-element');
+        }
+
+        function goHome() {
+            if (synth.speaking) synth.cancel();
+            hideAllViews();
+            document.getElementById('view-home').classList.remove('hidden-element');
+            showHomeIcon(false);
+            currentMode = null;
+            currentWeek = null;
+            quizType = null;
+        }
+
+        // --- 流程邏輯 ---
+        function selectMode(mode) {
+            currentMode = mode;
+            hideAllViews();
+            showHomeIcon(true);
+            
+            const weekGrid = document.getElementById('week-grid');
+            weekGrid.innerHTML = '';
+            
+            // 根據模式取得有資料的 Week
+            const dataToUse = mode === 'word' ? wordData : sentenceData;
+            const weeks = Object.keys(dataToUse);
+
+            document.getElementById('week-title').innerText = mode === 'word' ? '單字：請選擇週數' : '短句：請選擇週數';
+
+            weeks.forEach(week => {
+                const btn = document.createElement('button');
+                btn.className = 'bounce-click bg-green-100 hover:bg-green-200 text-green-800 font-bold py-3 px-2 rounded-xl border-2 border-green-300 transition-colors';
+                btn.innerText = week;
+                btn.onclick = () => selectWeek(week);
+                weekGrid.appendChild(btn);
+            });
+
+            document.getElementById('view-select-week').classList.remove('hidden-element');
+        }
+
+        function selectWeek(week) {
+            currentWeek = week;
+            hideAllViews();
+            
+            if (currentMode === 'word') {
+                document.getElementById('view-select-type').classList.remove('hidden-element');
+            } else {
+                startSentenceQuiz();
+            }
+        }
+
+        // --- 單字測驗邏輯 ---
+        function startWordQuiz(type) {
+            quizType = type;
+            questions = [...wordData[currentWeek]]; // 複製陣列
+            // 隨機打亂題目順序
+            questions.sort(() => Math.random() - 0.5); 
+            currentIndex = 0;
+            
+            hideAllViews();
+            document.getElementById('view-quiz-word').classList.remove('hidden-element');
+            document.getElementById('word-week-display').innerText = currentWeek;
+            
+            renderWordQuestion();
+        }
+
+        function renderWordQuestion() {
+            const q = questions[currentIndex];
+            document.getElementById('word-progress').innerText = `${currentIndex + 1} / ${questions.length}`;
+            
+            // 隱藏解答區與下一題按鈕
+            document.getElementById('word-answer-area').classList.add('hidden-element');
+            document.getElementById('btn-next-word').classList.add('hidden-element');
+            document.getElementById('btn-show-answer').classList.remove('hidden-element');
+
+            const btnVoice = document.getElementById('btn-play-voice');
+            const txtTrans = document.getElementById('text-translation');
+
+            if (quizType === 'voice') {
+                btnVoice.classList.remove('hidden-element');
+                txtTrans.classList.add('hidden-element');
+                speak(q.en, 'en-US'); // 自動發音英文
+            } else {
+                btnVoice.classList.add('hidden-element');
+                txtTrans.classList.remove('hidden-element');
+                txtTrans.innerText = q.zh;
+                speak(q.zh, 'zh-TW'); // 自動念中文
+            }
+        }
+
+        function showWordAnswer() {
+            const q = questions[currentIndex];
+            document.getElementById('ans-english').innerText = q.en;
+            document.getElementById('ans-chinese').innerText = q.zh;
+            
+            document.getElementById('word-answer-area').classList.remove('hidden-element');
+            document.getElementById('btn-show-answer').classList.add('hidden-element');
+            document.getElementById('btn-next-word').classList.remove('hidden-element');
+            
+            // 顯示解答時順便念出英文
+            speak(q.en, 'en-US');
+        }
+
+        function nextWordQuestion() {
+            currentIndex++;
+            if (currentIndex < questions.length) {
+                renderWordQuestion();
+            } else {
+                showResult();
+            }
+        }
+
+        // --- 短句測驗邏輯 ---
+        function startSentenceQuiz() {
+            questions = [...sentenceData[currentWeek]];
+            currentIndex = 0;
+            
+            hideAllViews();
+            document.getElementById('view-quiz-sentence').classList.remove('hidden-element');
+            document.getElementById('sentence-week-display').innerText = currentWeek;
+            
+            renderSentenceQuestion();
+        }
+
+        function renderSentenceQuestion() {
+            const sentence = questions[currentIndex];
+            document.getElementById('sentence-progress').innerText = `${currentIndex + 1} / ${questions.length}`;
+            document.getElementById('sentence-text').innerText = sentence;
+            
+            speak(sentence, 'en-US');
+            
+            const nextBtn = document.getElementById('btn-next-sentence');
+            if (currentIndex === questions.length - 1) {
+                nextBtn.innerText = "完成測驗 🎉";
+            } else {
+                nextBtn.innerText = "下一句 ➡️";
+            }
+        }
+
+        function nextSentenceQuestion() {
+            currentIndex++;
+            if (currentIndex < questions.length) {
+                renderSentenceQuestion();
+            } else {
+                showResult();
+            }
+        }
+
+        // --- 結束邏輯 ---
+        function showResult() {
+            hideAllViews();
+            document.getElementById('view-result').classList.remove('hidden-element');
+            speak('太棒了，完成啦！', 'zh-TW');
+        }
+
+        function restartCurrentQuiz() {
+            if (currentMode === 'word') {
+                startWordQuiz(quizType);
+            } else {
+                startSentenceQuiz();
+            }
+        }
+
+        // --- 計算與顯示當前週數 ---
+        function calculateCurrentWeek() {
+            // 設定基準日：2026/2/22 (注意：JavaScript 的 Date 物件中，月份是從 0 開始，1 代表 2 月)
+            const startDate = new Date(2026, 1, 22);
+            startDate.setHours(0, 0, 0, 0); // 歸零時間以精確計算天數
+            
+            const now = new Date();
+            now.setHours(0, 0, 0, 0);
+            
+            // 計算毫秒差並轉換為天數
+            const diffTime = now - startDate;
+            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+            
+            // 每 7 天為一週，無條件捨去後 +1 即為目前的週數
+            let currentWeek = Math.floor(diffDays / 7) + 1;
+            
+            // 若系統時間早於 2026/2/22，則預設顯示 Week 1
+            if (currentWeek < 1) currentWeek = 1;
+            
+            document.getElementById('current-week-display').innerText = `Week ${currentWeek}`;
+        }
+
+        // 網頁載入後執行日期計算
+        window.addEventListener('DOMContentLoaded', calculateCurrentWeek);
+
+    </script>
+</body>
+</html>
