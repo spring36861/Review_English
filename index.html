@@ -28,6 +28,7 @@
         <div class="bg-green-400 text-white text-center py-4 relative">
             <button id="btn-home-icon" class="absolute left-4 top-4 text-2xl hidden-element hover:scale-110 transition" onclick="goHome()">🏠</button>
             <h1 class="text-2xl sm:text-3xl font-black tracking-wide">🌟 四季L3B英文複習小幫手 🌟</h1>
+            <button id="btn-settings-icon" class="absolute right-4 top-4 text-2xl hover:scale-110 transition" onclick="showSettings()">⚙️</button>
         </div>
 
         <!-- 內容區 -->
@@ -46,6 +47,28 @@
                     💬 短句 (Sentences)
                 </button>
             </div>
+            
+            <!-- 畫面：語音設定 -->
+            <div id="view-settings" class="hidden-element flex flex-col gap-4 h-full">
+                <h2 class="text-2xl font-bold text-gray-700 mb-2 text-center">⚙️ 語音設定</h2>
+                <p class="text-sm text-gray-500 text-center -mt-2 mb-2">不同設備(手機/電腦)的語音庫會不一樣喔！</p>
+                
+                <div class="bg-blue-50 p-4 rounded-xl border-2 border-blue-200">
+                    <label class="block text-lg font-bold text-gray-700 mb-2">英文發音：</label>
+                    <select id="en-voice-select" class="w-full p-2 rounded-lg border border-gray-300 text-base mb-4" onchange="updateSelectedVoices()"></select>
+                    <button onclick="testVoice('en')" class="w-full bg-blue-400 text-white px-4 py-3 rounded-lg hover:bg-blue-500 font-bold shadow-[0_4px_0_rgb(59,130,246)] bounce-click">🔊 試聽英文聲音</button>
+                </div>
+
+                <div class="bg-orange-50 p-4 rounded-xl border-2 border-orange-200">
+                    <label class="block text-lg font-bold text-gray-700 mb-2">中文發音：</label>
+                    <select id="zh-voice-select" class="w-full p-2 rounded-lg border border-gray-300 text-base mb-4" onchange="updateSelectedVoices()"></select>
+                    <button onclick="testVoice('zh')" class="w-full bg-orange-400 text-white px-4 py-3 rounded-lg hover:bg-orange-500 font-bold shadow-[0_4px_0_rgb(249,115,22)] bounce-click">🔊 試聽中文聲音</button>
+                </div>
+
+                <button onclick="goHome()" class="mt-4 bounce-click w-full bg-green-500 hover:bg-green-600 text-white text-xl font-bold py-4 rounded-xl shadow-[0_6px_0_rgb(22,163,74)]">
+                    ✅ 完成設定
+                </button>
+            </div>
 
             <!-- 畫面 2: 選擇 Week -->
             <div id="view-select-week" class="hidden-element flex flex-col h-full">
@@ -53,6 +76,9 @@
                 <div id="week-grid" class="grid grid-cols-2 md:grid-cols-3 gap-3 overflow-y-auto max-h-[300px] p-2">
                     <!-- Week 按鈕會由 JS 動態生成 -->
                 </div>
+                <button onclick="goHome()" class="mt-6 text-gray-400 font-bold hover:text-gray-600 underline text-center">
+                    🔙 返回主畫面
+                </button>
             </div>
 
             <!-- 畫面 3: 選擇出題方式 (僅限單字) -->
@@ -63,6 +89,9 @@
                 </button>
                 <button onclick="startWordQuiz('translation')" class="bounce-click bg-orange-500 hover:bg-orange-600 text-white text-xl font-bold py-5 px-4 rounded-2xl shadow-[0_6px_0_rgb(234,88,12)] transition-all">
                     🇹🇼 看中文猜單字
+                </button>
+                <button onclick="goHome()" class="mt-2 text-gray-400 font-bold hover:text-gray-600 underline">
+                    🔙 返回主畫面
                 </button>
             </div>
 
@@ -94,6 +123,7 @@
                 <button id="btn-next-word" onclick="nextWordQuestion()" class="hidden-element bounce-click w-full bg-green-500 hover:bg-green-600 text-white text-2xl font-bold py-4 rounded-xl shadow-[0_6px_0_rgb(22,163,74)]">
                     下一題 ➡️
                 </button>
+                
                 <button onclick="goHome()" class="mt-4 text-gray-400 font-bold hover:text-gray-600 underline">
                     🔙 放棄測驗，回主畫面
                 </button>
@@ -116,6 +146,7 @@
                 <button id="btn-next-sentence" onclick="nextSentenceQuestion()" class="bounce-click mt-8 w-full bg-green-500 hover:bg-green-600 text-white text-2xl font-bold py-4 rounded-xl shadow-[0_6px_0_rgb(22,163,74)]">
                     下一句 ➡️
                 </button>
+                
                 <button onclick="goHome()" class="mt-4 text-gray-400 font-bold hover:text-gray-600 underline">
                     🔙 放棄測驗，回主畫面
                 </button>
@@ -137,7 +168,7 @@
         </div>
     </div>
 
-    <!-- 語音發聲物件 -->
+    <!-- 語音發聲物件與邏輯 -->
     <script>
         // --- 資料庫 ---
         const wordData = {
@@ -301,8 +332,82 @@
         let currentUtteranceText = ''; // 紀錄目前要念的字 (用來回放)
         let currentUtteranceLang = 'en-US';
 
-        // --- 語音功能 ---
+        // --- 語音功能與設定 ---
         const synth = window.speechSynthesis;
+        let voices = [];
+        let selectedEnVoiceURI = '';
+        let selectedZhVoiceURI = '';
+
+        // 載入與整理設備可用的聲音
+        function populateVoiceList() {
+            voices = synth.getVoices();
+            const enSelect = document.getElementById('en-voice-select');
+            const zhSelect = document.getElementById('zh-voice-select');
+            
+            if (!enSelect || !zhSelect) return;
+
+            enSelect.innerHTML = '';
+            zhSelect.innerHTML = '';
+
+            // 過濾出英文與中文聲音
+            const enVoices = voices.filter(v => v.lang.startsWith('en'));
+            const zhVoices = voices.filter(v => v.lang.startsWith('zh'));
+
+            // 系統自動找尋聽起來比較自然的女聲當作優先預設
+            let bestEnVoice = enVoices.find(v => v.name.includes('Google') || v.name.includes('Samantha') || v.name.includes('Siri')) || enVoices[0];
+            let bestZhVoice = zhVoices.find(v => v.name.includes('Google') || v.name.includes('Siri') || v.name.includes('Yating') || v.name.includes('Mei-Jia')) || zhVoices[0];
+
+            enVoices.forEach(voice => {
+                const option = document.createElement('option');
+                option.textContent = `${voice.name} (${voice.lang})`;
+                option.value = voice.voiceURI;
+                // 自動選取之前選過的，或是推薦的預設語音
+                if(selectedEnVoiceURI === voice.voiceURI || (!selectedEnVoiceURI && bestEnVoice && bestEnVoice.voiceURI === voice.voiceURI)) {
+                    option.selected = true;
+                    selectedEnVoiceURI = voice.voiceURI;
+                }
+                enSelect.appendChild(option);
+            });
+
+            zhVoices.forEach(voice => {
+                const option = document.createElement('option');
+                option.textContent = `${voice.name} (${voice.lang})`;
+                option.value = voice.voiceURI;
+                if(selectedZhVoiceURI === voice.voiceURI || (!selectedZhVoiceURI && bestZhVoice && bestZhVoice.voiceURI === voice.voiceURI)) {
+                    option.selected = true;
+                    selectedZhVoiceURI = voice.voiceURI;
+                }
+                zhSelect.appendChild(option);
+            });
+        }
+
+        // 確保語音庫變更時會更新清單 (有些瀏覽器會延遲載入)
+        if (speechSynthesis.onvoiceschanged !== undefined) {
+            speechSynthesis.onvoiceschanged = populateVoiceList;
+        }
+
+        function updateSelectedVoices() {
+            selectedEnVoiceURI = document.getElementById('en-voice-select').value;
+            selectedZhVoiceURI = document.getElementById('zh-voice-select').value;
+        }
+
+        function testVoice(lang) {
+            updateSelectedVoices();
+            if (lang === 'en') {
+                speak("Hello! How are you?", 'en-US');
+            } else {
+                speak("你好！這是我講話的聲音。", 'zh-TW');
+            }
+        }
+
+        function showSettings() {
+            if (voices.length === 0) populateVoiceList();
+            hideAllViews();
+            document.getElementById('view-settings').classList.remove('hidden-element');
+            document.getElementById('btn-settings-icon').classList.add('hidden-element');
+            showHomeIcon(false);
+        }
+
         function speak(text, lang = 'en-US') {
             if (synth.speaking) synth.cancel(); // 停止先前的語音
             
@@ -313,8 +418,24 @@
             }
 
             const utterThis = new SpeechSynthesisUtterance(textToSpeak);
-            utterThis.lang = lang;
-            utterThis.rate = 0.85; // 放慢一點讓小孩聽清楚
+            
+            // 套用自訂選擇的語音
+            if (lang === 'en-US' && selectedEnVoiceURI) {
+                const voice = voices.find(v => v.voiceURI === selectedEnVoiceURI);
+                if (voice) utterThis.voice = voice;
+            } else if (lang === 'zh-TW' && selectedZhVoiceURI) {
+                const voice = voices.find(v => v.voiceURI === selectedZhVoiceURI);
+                if (voice) utterThis.voice = voice;
+            } else {
+                utterThis.lang = lang; // 找不到時的備案
+            }
+            
+            // 動態調整語速：如果是短句模式且為英文，調得非常慢 (0.6)，單字則為 (0.8)
+            if (currentMode === 'sentence' && lang === 'en-US') {
+                utterThis.rate = 0.6; 
+            } else {
+                utterThis.rate = 0.8;
+            }
             
             currentUtteranceText = textToSpeak;
             currentUtteranceLang = lang;
@@ -328,7 +449,7 @@
 
         // --- UI 控制 ---
         function hideAllViews() {
-            const views = ['view-home', 'view-select-week', 'view-select-type', 'view-quiz-word', 'view-quiz-sentence', 'view-result'];
+            const views = ['view-home', 'view-select-week', 'view-select-type', 'view-quiz-word', 'view-quiz-sentence', 'view-result', 'view-settings'];
             views.forEach(v => document.getElementById(v).classList.add('hidden-element'));
         }
 
@@ -343,6 +464,7 @@
             hideAllViews();
             document.getElementById('view-home').classList.remove('hidden-element');
             showHomeIcon(false);
+            document.getElementById('btn-settings-icon').classList.remove('hidden-element');
             currentMode = null;
             currentWeek = null;
             quizType = null;
@@ -520,7 +642,11 @@
         }
 
         // 網頁載入後執行日期計算
-        window.addEventListener('DOMContentLoaded', calculateCurrentWeek);
+        window.addEventListener('DOMContentLoaded', () => {
+            calculateCurrentWeek();
+            // 嘗試初次載入語音
+            setTimeout(populateVoiceList, 500);
+        });
 
     </script>
 </body>
