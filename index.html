@@ -53,6 +53,9 @@
                 <div id="week-grid" class="grid grid-cols-2 md:grid-cols-3 gap-3 overflow-y-auto max-h-[300px] p-2">
                     <!-- Week 按鈕會由 JS 動態生成 -->
                 </div>
+                <button onclick="goHome()" class="mt-6 text-gray-400 font-bold hover:text-gray-600 underline text-center">
+                    🔙 返回主畫面
+                </button>
             </div>
 
             <!-- 畫面 3: 選擇出題方式 (僅限單字) -->
@@ -63,6 +66,9 @@
                 </button>
                 <button onclick="startWordQuiz('translation')" class="bounce-click bg-orange-500 hover:bg-orange-600 text-white text-xl font-bold py-5 px-4 rounded-2xl shadow-[0_6px_0_rgb(234,88,12)] transition-all">
                     🇹🇼 看中文猜單字
+                </button>
+                <button onclick="goHome()" class="mt-2 text-gray-400 font-bold hover:text-gray-600 underline">
+                    🔙 返回主畫面
                 </button>
             </div>
 
@@ -94,6 +100,7 @@
                 <button id="btn-next-word" onclick="nextWordQuestion()" class="hidden-element bounce-click w-full bg-green-500 hover:bg-green-600 text-white text-2xl font-bold py-4 rounded-xl shadow-[0_6px_0_rgb(22,163,74)]">
                     下一題 ➡️
                 </button>
+                
                 <button onclick="goHome()" class="mt-4 text-gray-400 font-bold hover:text-gray-600 underline">
                     🔙 放棄測驗，回主畫面
                 </button>
@@ -116,6 +123,7 @@
                 <button id="btn-next-sentence" onclick="nextSentenceQuestion()" class="bounce-click mt-8 w-full bg-green-500 hover:bg-green-600 text-white text-2xl font-bold py-4 rounded-xl shadow-[0_6px_0_rgb(22,163,74)]">
                     下一句 ➡️
                 </button>
+                
                 <button onclick="goHome()" class="mt-4 text-gray-400 font-bold hover:text-gray-600 underline">
                     🔙 放棄測驗，回主畫面
                 </button>
@@ -137,7 +145,7 @@
         </div>
     </div>
 
-    <!-- 語音發聲物件 -->
+    <!-- 語音發聲物件與邏輯 -->
     <script>
         // --- 資料庫 ---
         const wordData = {
@@ -314,7 +322,13 @@
 
             const utterThis = new SpeechSynthesisUtterance(textToSpeak);
             utterThis.lang = lang;
-            utterThis.rate = 0.85; // 放慢一點讓小孩聽清楚
+            
+            // 動態調整語速：如果是短句模式且為英文，調得非常慢 (0.6)，單字則為 (0.8)
+            if (currentMode === 'sentence' && lang === 'en-US') {
+                utterThis.rate = 0.6; 
+            } else {
+                utterThis.rate = 0.8;
+            }
             
             currentUtteranceText = textToSpeak;
             currentUtteranceLang = lang;
