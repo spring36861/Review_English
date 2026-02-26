@@ -524,10 +524,10 @@
             const diffTime = now - startDate;
             const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
             
-            // 每 7 天為一週，無條件捨去後 +1 即為目前的週數
-            let currentWeek = Math.floor(diffDays / 7) + 1;
+            // 每 7 天為一週，無條件捨去後 +4 即為目前的週數 (設定 2026/2/22 這週為 Week 4)
+            let currentWeek = Math.floor(diffDays / 7) + 4;
             
-            // 若系統時間早於 2026/2/22，則預設顯示 Week 1
+            // 避免出現小於 1 的週數 (若在基準日的三週前打開)
             if (currentWeek < 1) currentWeek = 1;
             
             document.getElementById('current-week-display').innerText = `Week ${currentWeek}`;
