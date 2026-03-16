@@ -45,6 +45,9 @@
                 <button onclick="selectMode('sentence')" class="bounce-click bg-yellow-400 hover:bg-yellow-500 text-gray-800 text-2xl font-bold py-6 px-4 rounded-2xl shadow-[0_8px_0_rgb(202,138,4)] transition-all hover:-translate-y-1">
                     💬 短句 (Sentences)
                 </button>
+                <button onclick="selectMode('copying')" class="bounce-click bg-pink-400 hover:bg-pink-500 text-white text-2xl font-bold py-6 px-4 rounded-2xl shadow-[0_8px_0_rgb(219,39,119)] transition-all hover:-translate-y-1">
+                    ✍️ 抄寫作業 (Copying)
+                </button>
             </div>
 
             <!-- 畫面 2: 選擇 Week -->
@@ -139,6 +142,17 @@
                 </button>
                 <button onclick="goHome()" class="bounce-click w-full bg-gray-400 hover:bg-gray-500 text-white text-xl font-bold py-4 rounded-xl shadow-[0_6px_0_rgb(156,163,175)]">
                     🏠 回到主畫面
+                </button>
+            </div>
+
+            <!-- 畫面 7: 抄寫作業清單 -->
+            <div id="view-copying-list" class="hidden-element flex flex-col h-full max-h-[65vh]">
+                <h2 id="copying-week-title" class="text-2xl font-bold text-gray-700 mb-4 text-center">Week X 抄寫作業</h2>
+                <div id="copying-content" class="flex-grow overflow-y-auto bg-gray-50 p-5 rounded-xl border-2 border-pink-200 text-left shadow-inner">
+                    <!-- 內容由 JS 動態產生 -->
+                </div>
+                <button onclick="goHome()" class="mt-4 bounce-click w-full bg-gray-400 hover:bg-gray-500 text-white text-xl font-bold py-4 rounded-xl shadow-[0_6px_0_rgb(156,163,175)]">
+                    🔙 返回主畫面
                 </button>
             </div>
 
@@ -342,7 +356,7 @@
 
         // --- UI 控制 ---
         function hideAllViews() {
-            const views = ['view-home', 'view-select-week', 'view-select-type', 'view-quiz-word', 'view-quiz-sentence', 'view-result'];
+            const views = ['view-home', 'view-select-week', 'view-select-type', 'view-quiz-word', 'view-quiz-sentence', 'view-result', 'view-copying-list'];
             views.forEach(v => document.getElementById(v).classList.add('hidden-element'));
         }
 
@@ -371,11 +385,16 @@
             const weekGrid = document.getElementById('week-grid');
             weekGrid.innerHTML = '';
             
-            // 根據模式取得有資料的 Week
-            const dataToUse = mode === 'word' ? wordData : sentenceData;
+            // 根據模式取得有資料的 Week (抄寫模式預設用單字週數作為基準)
+            const dataToUse = mode === 'sentence' ? sentenceData : wordData;
             const weeks = Object.keys(dataToUse);
 
-            document.getElementById('week-title').innerText = mode === 'word' ? '單字：請選擇週數' : '短句：請選擇週數';
+            let titleText = '';
+            if (mode === 'word') titleText = '單字：請選擇週數';
+            else if (mode === 'sentence') titleText = '短句：請選擇週數';
+            else titleText = '抄寫作業：請選擇週數';
+            
+            document.getElementById('week-title').innerText = titleText;
 
             weeks.forEach(week => {
                 const btn = document.createElement('button');
@@ -394,9 +413,45 @@
             
             if (currentMode === 'word') {
                 document.getElementById('view-select-type').classList.remove('hidden-element');
-            } else {
+            } else if (currentMode === 'sentence') {
                 startSentenceQuiz();
+            } else if (currentMode === 'copying') {
+                startCopyingList();
             }
+        }
+
+        // --- 抄寫作業邏輯 ---
+        function startCopyingList() {
+            hideAllViews();
+            document.getElementById('view-copying-list').classList.remove('hidden-element');
+            document.getElementById('copying-week-title').innerText = `${currentWeek} 抄寫清單`;
+
+            const contentDiv = document.getElementById('copying-content');
+            contentDiv.innerHTML = '';
+
+            // 產生單字區塊 HTML
+            let wordsHTML = '<h3 class="text-xl font-bold text-blue-600 mb-3 border-b-2 border-blue-200 pb-1">🅰️ 單字 (Vocabulary)</h3>';
+            wordsHTML += '<ul class="list-decimal list-inside space-y-2 mb-8 text-gray-800 text-lg ml-2">';
+            const words = wordData[currentWeek] || [];
+            words.forEach(w => {
+                wordsHTML += `<li><span class="font-bold mr-2 text-gray-900">${w.en}</span> <span class="text-gray-500 text-base">(${w.zh})</span></li>`;
+            });
+            wordsHTML += '</ul>';
+
+            // 產生短句區塊 HTML
+            let sentencesHTML = '<h3 class="text-xl font-bold text-yellow-600 mb-3 border-b-2 border-yellow-200 pb-1">💬 短句 (Sentences)</h3>';
+            sentencesHTML += '<ul class="list-decimal list-inside space-y-4 text-gray-800 text-lg ml-2">';
+            const sentences = sentenceData[currentWeek] || [];
+            if(sentences.length > 0) {
+                sentences.forEach(s => {
+                    sentencesHTML += `<li><span class="font-bold text-gray-900">${s}</span></li>`;
+                });
+            } else {
+                sentencesHTML += '<li class="text-gray-400 italic">本週無短句資料</li>';
+            }
+            sentencesHTML += '</ul>';
+
+            contentDiv.innerHTML = wordsHTML + sentencesHTML;
         }
 
         // --- 單字測驗邏輯 ---
