@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>四季L3B英文複習小幫手</title>
+    <title>四季L4英文複習小幫手</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap');
@@ -23,29 +23,34 @@
 
     <!-- 主容器 -->
     <div id="app-container" class="bg-white rounded-3xl shadow-xl w-full max-w-lg overflow-hidden border-4 border-green-400">
-        
+
         <!-- 標題列 -->
         <div class="bg-green-400 text-white text-center py-4 relative">
             <button id="btn-home-icon" class="absolute left-4 top-4 text-2xl hidden-element hover:scale-110 transition" onclick="goHome()">🏠</button>
-            <h1 class="text-2xl sm:text-3xl font-black tracking-wide">🌟 四季L3B英文複習小幫手 🌟</h1>
+            <h1 class="text-2xl sm:text-3xl font-black tracking-wide">🌟 四季L4英文複習小幫手 🌟</h1>
+            <p class="text-sm font-bold text-green-50 mt-1">L4 Wordbank ・ 1st Semester</p>
         </div>
 
         <!-- 內容區 -->
         <div class="p-6 md:p-8 min-h-[400px] flex flex-col justify-center">
 
-            <!-- 畫面 1: 首頁 (選擇單字或短句) -->
-            <div id="view-home" class="flex flex-col gap-6 text-center">
+            <!-- 畫面 1: 首頁 (選擇單字 / 短句 / 抄寫 / 動詞三態) -->
+            <div id="view-home" class="flex flex-col gap-5 text-center">
                 <div class="bg-blue-100 text-blue-800 p-3 rounded-xl font-bold text-lg border-2 border-blue-300">
                     📅 本週進度：<span id="current-week-display" class="text-xl text-blue-600">計算中...</span>
+                    <div id="current-week-note" class="text-sm font-bold text-blue-500 mt-1 hidden-element"></div>
                 </div>
-                <h2 class="text-2xl font-bold text-gray-700 mb-2">你想複習什麼呢？</h2>
-                <button onclick="selectMode('word')" class="bounce-click bg-blue-500 hover:bg-blue-600 text-white text-2xl font-bold py-6 px-4 rounded-2xl shadow-[0_8px_0_rgb(37,99,235)] transition-all hover:-translate-y-1">
+                <h2 class="text-2xl font-bold text-gray-700">你想複習什麼呢？</h2>
+                <button onclick="selectMode('word')" class="bounce-click bg-blue-500 hover:bg-blue-600 text-white text-2xl font-bold py-5 px-4 rounded-2xl shadow-[0_8px_0_rgb(37,99,235)] transition-all hover:-translate-y-1">
                     🅰️ 單字 (Vocabulary)
                 </button>
-                <button onclick="selectMode('sentence')" class="bounce-click bg-yellow-400 hover:bg-yellow-500 text-gray-800 text-2xl font-bold py-6 px-4 rounded-2xl shadow-[0_8px_0_rgb(202,138,4)] transition-all hover:-translate-y-1">
+                <button onclick="selectMode('sentence')" class="bounce-click bg-yellow-400 hover:bg-yellow-500 text-gray-800 text-2xl font-bold py-5 px-4 rounded-2xl shadow-[0_8px_0_rgb(202,138,4)] transition-all hover:-translate-y-1">
                     💬 短句 (Sentences)
                 </button>
-                <button onclick="selectMode('copying')" class="bounce-click bg-pink-400 hover:bg-pink-500 text-white text-2xl font-bold py-6 px-4 rounded-2xl shadow-[0_8px_0_rgb(219,39,119)] transition-all hover:-translate-y-1">
+                <button onclick="selectMode('verb')" class="bounce-click bg-indigo-500 hover:bg-indigo-600 text-white text-2xl font-bold py-5 px-4 rounded-2xl shadow-[0_8px_0_rgb(67,56,202)] transition-all hover:-translate-y-1">
+                    🔤 動詞三態 (Verb Forms)
+                </button>
+                <button onclick="selectMode('copying')" class="bounce-click bg-pink-400 hover:bg-pink-500 text-white text-2xl font-bold py-5 px-4 rounded-2xl shadow-[0_8px_0_rgb(219,39,119)] transition-all hover:-translate-y-1">
                     ✍️ 抄寫作業 (Copying)
                 </button>
             </div>
@@ -103,7 +108,7 @@
                 <button id="btn-next-word" onclick="nextWordQuestion()" class="hidden-element bounce-click w-full bg-green-500 hover:bg-green-600 text-white text-2xl font-bold py-4 rounded-xl shadow-[0_6px_0_rgb(22,163,74)]">
                     下一題 ➡️
                 </button>
-                
+
                 <button onclick="goHome()" class="mt-4 text-gray-400 font-bold hover:text-gray-600 underline">
                     🔙 放棄測驗，回主畫面
                 </button>
@@ -126,7 +131,7 @@
                 <button id="btn-next-sentence" onclick="nextSentenceQuestion()" class="bounce-click mt-8 w-full bg-green-500 hover:bg-green-600 text-white text-2xl font-bold py-4 rounded-xl shadow-[0_6px_0_rgb(22,163,74)]">
                     下一句 ➡️
                 </button>
-                
+
                 <button onclick="goHome()" class="mt-4 text-gray-400 font-bold hover:text-gray-600 underline">
                     🔙 放棄測驗，回主畫面
                 </button>
@@ -136,7 +141,7 @@
             <div id="view-result" class="hidden-element flex flex-col items-center justify-center text-center gap-6 h-full">
                 <div class="text-6xl">🎉</div>
                 <h2 class="text-3xl font-black text-gray-800">太棒了！完成啦！</h2>
-                
+
                 <button onclick="restartCurrentQuiz()" class="bounce-click w-full bg-blue-500 hover:bg-blue-600 text-white text-xl font-bold py-4 rounded-xl shadow-[0_6px_0_rgb(37,99,235)]">
                     🔄 再來一次
                 </button>
@@ -156,168 +161,389 @@
                 </button>
             </div>
 
+            <!-- 畫面 8: 動詞三態 - 選擇範圍 -->
+            <div id="view-select-verb" class="hidden-element flex flex-col h-full">
+                <h2 class="text-2xl font-bold text-gray-700 mb-1 text-center">動詞三態：請選擇範圍</h2>
+                <p class="text-sm text-gray-400 text-center mb-4">L3 &amp; L4 Verb List (orange-movers)・共 <span id="verb-total">0</span> 個動詞</p>
+                <div id="verb-group-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-3 overflow-y-auto max-h-[280px] p-2">
+                    <!-- 分組按鈕由 JS 動態生成 -->
+                </div>
+                <button onclick="showVerbTable()" class="mt-4 bounce-click w-full bg-teal-500 hover:bg-teal-600 text-white text-lg font-bold py-3 rounded-xl shadow-[0_6px_0_rgb(13,148,136)]">
+                    📖 查看完整三態表
+                </button>
+                <button onclick="goHome()" class="mt-4 text-gray-400 font-bold hover:text-gray-600 underline text-center">
+                    🔙 返回主畫面
+                </button>
+            </div>
+
+            <!-- 畫面 9: 動詞三態測驗進行中 -->
+            <div id="view-quiz-verb" class="hidden-element flex flex-col items-center text-center h-full justify-between">
+                <div class="w-full flex justify-between text-gray-500 font-bold mb-4">
+                    <span id="verb-progress">1 / 12</span>
+                    <span id="verb-group-display">第 1 組</span>
+                </div>
+
+                <div class="flex-grow flex flex-col items-center justify-center w-full min-h-[150px]">
+                    <p class="text-gray-400 font-bold mb-2">原形動詞 (Verb)</p>
+                    <h3 id="verb-question" class="text-5xl font-black text-indigo-700 mb-3">go</h3>
+                    <button class="text-4xl hover:scale-110 transition-transform" onclick="replayAudio()">🔊</button>
+                </div>
+
+                <!-- 解答區 -->
+                <div id="verb-answer-area" class="hidden-element w-full bg-indigo-50 p-4 rounded-2xl mb-6 border-2 border-indigo-300">
+                    <div class="grid grid-cols-3 gap-2 text-center">
+                        <div>
+                            <p class="text-xs font-bold text-gray-400">Verb</p>
+                            <p id="verb-ans-v" class="text-xl font-black text-gray-700 break-words">go</p>
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-gray-400">Past Tense</p>
+                            <p id="verb-ans-p" class="text-xl font-black text-indigo-700 break-words">went</p>
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-gray-400">Past Participle</p>
+                            <p id="verb-ans-pp" class="text-xl font-black text-purple-700 break-words">gone</p>
+                        </div>
+                    </div>
+                    <p id="verb-ans-zh" class="text-lg font-bold text-gray-500 mt-3 border-t border-indigo-200 pt-2">去</p>
+                </div>
+
+                <button id="btn-show-verb-answer" onclick="showVerbAnswer()" class="bounce-click w-full bg-indigo-500 hover:bg-indigo-600 text-white text-2xl font-bold py-4 rounded-xl shadow-[0_6px_0_rgb(67,56,202)]">
+                    👀 看解答
+                </button>
+                <button id="btn-next-verb" onclick="nextVerbQuestion()" class="hidden-element bounce-click w-full bg-green-500 hover:bg-green-600 text-white text-2xl font-bold py-4 rounded-xl shadow-[0_6px_0_rgb(22,163,74)]">
+                    下一題 ➡️
+                </button>
+
+                <button onclick="goHome()" class="mt-4 text-gray-400 font-bold hover:text-gray-600 underline">
+                    🔙 放棄測驗，回主畫面
+                </button>
+            </div>
+
+            <!-- 畫面 10: 動詞三態完整表格 -->
+            <div id="view-verb-table" class="hidden-element flex flex-col h-full max-h-[65vh]">
+                <h2 class="text-2xl font-bold text-gray-700 mb-4 text-center">📖 動詞三態完整表</h2>
+                <div id="verb-table-content" class="flex-grow overflow-y-auto bg-gray-50 p-3 rounded-xl border-2 border-indigo-200 text-left shadow-inner">
+                    <!-- 內容由 JS 動態產生 -->
+                </div>
+                <button onclick="selectMode('verb')" class="mt-4 bounce-click w-full bg-gray-400 hover:bg-gray-500 text-white text-xl font-bold py-4 rounded-xl shadow-[0_6px_0_rgb(156,163,175)]">
+                    🔙 返回選擇範圍
+                </button>
+            </div>
+
         </div>
     </div>
 
     <!-- 語音發聲物件與邏輯 -->
     <script>
-        // --- 資料庫 ---
+        // =====================================================================
+        //  資料庫：L4 Wordbank / Sentence Bank ・1st Semester
+        //  基準日：2026/8/7 為 Week 1 的第一天
+        //  (Week 6, 11, 16~21, 25, 26 為複習週，沒有新單字/新句型)
+        // =====================================================================
         const wordData = {
+            // Welcome Unit 0：講義註明「只有粗框內的字會考週考」，故僅收錄粗框 15 字
             "Week 1": [
-                { en: "vacation", zh: "假期" }, { en: "beach", zh: "海灘" }, { en: "ocean", zh: "海洋" },
-                { en: "buy (ice cream)", zh: "買(冰淇淋)" }, { en: "(go) surfing", zh: "(去)衝浪" },
-                { en: "(go on a) boat trip", zh: "(去)遊船" }, { en: "(have a) picnic", zh: "(去)野餐" },
-                { en: "campsite", zh: "露營地" }, { en: "sand", zh: "沙子" }, { en: "dolphin", zh: "海豚" },
-                { en: "seahorse", zh: "海馬" }, { en: "starfish", zh: "海星" }, { en: "baby", zh: "嬰兒" },
-                { en: "elevator", zh: "電梯" }, { en: "lady", zh: "女士" }
+                { en: "sixth (6th)", zh: "第六" }, { en: "seventh (7th)", zh: "第七" }, { en: "eighth (8th)", zh: "第八" },
+                { en: "ninth (9th)", zh: "第九" }, { en: "tenth (10th)", zh: "第十" }, { en: "eleventh (11th)", zh: "第十一" },
+                { en: "twelfth (12th)", zh: "第十二" }, { en: "thirteenth (13th)", zh: "第十三" }, { en: "twentieth (20th)", zh: "第二十" },
+                { en: "thirtieth (30th)", zh: "第三十" }, { en: "agree", zh: "同意" }, { en: "confused about", zh: "對…感到困惑" },
+                { en: "explain", zh: "解釋" }, { en: "invitation", zh: "邀請函" }, { en: "include", zh: "包含" }
+            ],
+            // ---------- English Code U1 ----------
+            "Week 2": [
+                { en: "balance", zh: "平衡" }, { en: "collect", zh: "收集" }, { en: "make a camp", zh: "搭營地" },
+                { en: "swing (swung)", zh: "擺盪" }, { en: "branch", zh: "樹枝" }, { en: "explore", zh: "探索" },
+                { en: "adventure", zh: "冒險" }, { en: "lighthouse", zh: "燈塔" }, { en: "shipwreck", zh: "沉船/船難" },
+                { en: "whistle", zh: "哨子/吹口哨" }, { en: "compass", zh: "指南針" }, { en: "search", zh: "搜尋" },
+                { en: "flash", zh: "閃光" }, { en: "blow (blew)", zh: "吹" }, { en: "get lost", zh: "迷路" }
+            ],
+            "Week 3": [
+                { en: "blanket", zh: "毯子" }, { en: "matches", zh: "火柴" }, { en: "wheel", zh: "輪子" },
+                { en: "boots", zh: "靴子" }, { en: "gloves", zh: "手套" }, { en: "cross", zh: "穿越/越過" },
+                { en: "stream", zh: "小溪" }, { en: "flow (flowed)", zh: "流動" }, { en: "equipment", zh: "裝備" },
+                { en: "dictionary", zh: "字典" }, { en: "crash", zh: "墜毀/碰撞" }, { en: "message", zh: "訊息" },
+                { en: "location", zh: "地點/位置" }, { en: "useful", zh: "有用的" }, { en: "item", zh: "物品" }
             ],
             "Week 4": [
-                { en: "pinch", zh: "捏" }, { en: "infinitive", zh: "不定詞" }, { en: "storm", zh: "暴風雨" },
-                { en: "disaster", zh: "災難" }, { en: "rescue", zh: "救援" }, { en: "tent", zh: "帳篷" },
-                { en: "competition", zh: "比賽" }, { en: "collect", zh: "收集" }, { en: "conservation", zh: "保育" },
-                { en: "fish tank", zh: "魚缸" }, { en: "ice cube", zh: "冰塊" }, { en: "absorb", zh: "吸收" },
-                { en: "she", zh: "她" }, { en: "tiger", zh: "老虎" }, { en: "child", zh: "小孩" }
+                { en: "tree house", zh: "樹屋" }, { en: "bridge", zh: "橋" }, { en: "plans", zh: "計畫" },
+                { en: "partner", zh: "夥伴" }, { en: "knife", zh: "刀子" }, { en: "describe", zh: "描述" },
+                { en: "pirate", zh: "海盜" }, { en: "follow", zh: "跟隨" }, { en: "cable", zh: "纜繩/電纜" },
+                { en: "imagine", zh: "想像" }, { en: "opposite", zh: "相反的/對面的" }, { en: "direction", zh: "方向" },
+                { en: "outdoors", zh: "在戶外" }, { en: "sailboat", zh: "帆船" }, { en: "local", zh: "當地的" }
             ],
             "Week 5": [
-                { en: "climate change", zh: "氣候變遷" }, { en: "equator", zh: "赤道" }, { en: "heat", zh: "熱量/加熱" },
-                { en: "melt", zh: "融化" }, { en: "sink", zh: "下沉" }, { en: "rise", zh: "上升" },
-                { en: "bottom", zh: "底部" }, { en: "prediction", zh: "預測" }, { en: "observation", zh: "觀察" },
-                { en: "invisible", zh: "看不見的" }, { en: "remove", zh: "移除" }, { en: "poor", zh: "貧窮的/可憐的" },
-                { en: "hotel", zh: "旅館" }, { en: "uniform", zh: "制服" }, { en: "music", zh: "音樂" }
+                { en: "triangle", zh: "三角形" }, { en: "bottle", zh: "瓶子" }, { en: "connect", zh: "連接" },
+                { en: "popsicle", zh: "冰棒" }, { en: "clay", zh: "黏土" }, { en: "strength", zh: "力量" },
+                { en: "schedule", zh: "時間表/行程" }, { en: "press", zh: "壓/按" }, { en: "information", zh: "資訊" },
+                { en: "accident", zh: "意外" }, { en: "smash", zh: "砸碎/猛擊" }, { en: "took out (take out)", zh: "拿出來" },
+                { en: "communication", zh: "溝通" }, { en: "go sailing", zh: "去航行" }, { en: "experiment", zh: "實驗" }
             ],
+            // ---------- English Code U2 ----------
             "Week 7": [
-                { en: "shopping list", zh: "購物清單" }, { en: "broccoli", zh: "青花菜" }, { en: "carrot", zh: "胡蘿蔔" },
-                { en: "grocery store", zh: "雜貨店" }, { en: "supermarket", zh: "超市" }, { en: "department store", zh: "百貨公司" },
-                { en: "butcher shop", zh: "肉店" }, { en: "bakery", zh: "麵包店" }, { en: "sales assistant", zh: "售貨員" },
-                { en: "cash register", zh: "收銀機" }, { en: "customer", zh: "顧客" }, { en: "stall", zh: "攤位" },
-                { en: "panda", zh: "熊貓" }, { en: "gorilla", zh: "大猩猩" }, { en: "umbrella", zh: "雨傘" }
+                { en: "exhibition", zh: "展覽" }, { en: "century", zh: "世紀" }, { en: "capital", zh: "首都" },
+                { en: "empire", zh: "帝國" }, { en: "pyramid", zh: "金字塔" }, { en: "jewelry", zh: "珠寶" },
+                { en: "invent", zh: "發明" }, { en: "calendar", zh: "日曆" }, { en: "create", zh: "創造" },
+                { en: "built", zh: "建造(build 的過去式)" }, { en: "backyard", zh: "後院" }, { en: "pottery", zh: "陶器" },
+                { en: "metal", zh: "金屬" }, { en: "treasure", zh: "寶藏" }, { en: "middle", zh: "中間" }
             ],
             "Week 8": [
-                { en: "sugar", zh: "糖" }, { en: "some", zh: "一些" }, { en: "any", zh: "任何" },
-                { en: "present", zh: "禮物" }, { en: "design", zh: "設計" }, { en: "common", zh: "常見的" },
-                { en: "wrapper", zh: "包裝紙" }, { en: "product", zh: "產品" }, { en: "logo", zh: "商標" },
-                { en: "toothpaste", zh: "牙膏" }, { en: "shampoo", zh: "洗髮精" }, { en: "sneakers", zh: "運動鞋" },
-                { en: "chicken", zh: "雞肉" }, { en: "lemon", zh: "檸檬" }, { en: "surprise", zh: "驚喜" }
+                { en: "sandals", zh: "涼鞋" }, { en: "system", zh: "系統" }, { en: "belong to", zh: "屬於" },
+                { en: "meter", zh: "公尺" }, { en: "ruins", zh: "遺跡" }, { en: "ancient", zh: "古老的" },
+                { en: "building", zh: "建築物" }, { en: "maize", zh: "玉米" }, { en: "keyhole", zh: "鑰匙孔" },
+                { en: "summary", zh: "摘要" }, { en: "fair", zh: "公平的/園遊會" }, { en: "square", zh: "廣場/正方形" },
+                { en: "feather", zh: "羽毛" }, { en: "design", zh: "設計" }, { en: "statue", zh: "雕像" }
             ],
             "Week 9": [
-                { en: "a lot of", zh: "許多的" }, { en: "much", zh: "許多(不可數)" }, { en: "many", zh: "許多(可數)" },
-                { en: "skyscraper", zh: "摩天大樓" }, { en: "desert", zh: "沙漠" }, { en: "electronics", zh: "電子產品" },
-                { en: "fountain", zh: "噴泉" }, { en: "material", zh: "材料" }, { en: "method", zh: "方法" },
-                { en: "magazine", zh: "雜誌" }, { en: "collage", zh: "拼貼畫" }, { en: "create", zh: "創造" },
-                { en: "monkey", zh: "猴子" }, { en: "son", zh: "兒子" }, { en: "honey", zh: "蜂蜜" }
+                { en: "compare", zh: "比較" }, { en: "northern", zh: "北方的" }, { en: "southern", zh: "南方的" },
+                { en: "central", zh: "中央的" }, { en: "weigh", zh: "秤重/重量為" }, { en: "protection", zh: "保護" },
+                { en: "score", zh: "得分" }, { en: "goal", zh: "球門/目標" }, { en: "goalkeeper", zh: "守門員" },
+                { en: "court", zh: "球場" }, { en: "aim", zh: "瞄準/目標" }, { en: "through", zh: "穿過" },
+                { en: "go bowling", zh: "去打保齡球" }, { en: "fantasy", zh: "幻想" }, { en: "daily life", zh: "日常生活" }
             ],
-            "Week 11": [
-                { en: "warrior", zh: "戰士" }, { en: "save", zh: "拯救" }, { en: "clean up", zh: "清理" },
-                { en: "recycle", zh: "回收" }, { en: "reduce", zh: "減少" }, { en: "reuse", zh: "重複使用" },
-                { en: "waste", zh: "浪費/廢棄物" }, { en: "plant", zh: "種植/植物" }, { en: "glass", zh: "玻璃" },
-                { en: "trash", zh: "垃圾" }, { en: "environment", zh: "環境" }, { en: "wildlife", zh: "野生動物" },
-                { en: "knife", zh: "刀" }, { en: "knee", zh: "膝蓋" }, { en: "wrong", zh: "錯誤的" }
+            "Week 10": [
+                { en: "material", zh: "材料" }, { en: "palace", zh: "宮殿" }, { en: "position", zh: "位置" },
+                { en: "outskirts", zh: "郊區" }, { en: "article", zh: "文章" }, { en: "amazing", zh: "令人驚奇的" },
+                { en: "discovery", zh: "發現" }, { en: "probably", zh: "可能" }, { en: "symbol", zh: "符號/象徵" },
+                { en: "Egypt", zh: "埃及" }, { en: "vertical", zh: "垂直的" }, { en: "horizontal", zh: "水平的" },
+                { en: "represent", zh: "代表" }, { en: "historian", zh: "歷史學家" }, { en: "director", zh: "導演/主任" }
             ],
+            // ---------- English Code U3 ----------
             "Week 12": [
-                { en: "pollution", zh: "污染" }, { en: "deforestation", zh: "森林砍伐" }, { en: "population", zh: "人口" },
-                { en: "challenge", zh: "挑戰" }, { en: "prize", zh: "獎品" }, { en: "project", zh: "計畫" },
-                { en: "empty", zh: "空的" }, { en: "lot", zh: "許多/一塊地" }, { en: "sort", zh: "分類" },
-                { en: "shopping cart", zh: "購物車" }, { en: "nature", zh: "自然" }, { en: "garden", zh: "花園" },
-                { en: "lamb", zh: "小羊" }, { en: "comb", zh: "梳子" }, { en: "glove", zh: "手套" }
+                { en: "space", zh: "太空" }, { en: "gravity", zh: "重力" }, { en: "astronaut", zh: "太空人" },
+                { en: "float", zh: "漂浮" }, { en: "experience", zh: "經驗/體驗" }, { en: "handle", zh: "把手/處理" },
+                { en: "colony", zh: "殖民地" }, { en: "pollute", zh: "污染" }, { en: "control", zh: "控制" },
+                { en: "panel", zh: "面板" }, { en: "radio", zh: "無線電/收音機" }, { en: "planet", zh: "行星" },
+                { en: "promise", zh: "承諾" }, { en: "return", zh: "返回" }, { en: "orbit", zh: "軌道" }
             ],
             "Week 13": [
-                { en: "pollute", zh: "污染" }, { en: "release", zh: "釋放" }, { en: "toxin", zh: "毒素" },
-                { en: "compost", zh: "堆肥" }, { en: "landfill", zh: "垃圾掩埋場" }, { en: "rot", zh: "腐爛" },
-                { en: "a slice of", zh: "一片" }, { en: "tub", zh: "桶/浴缸" }, { en: "container", zh: "容器" },
-                { en: "creature", zh: "生物" }, { en: "president", zh: "總統" }, { en: "protect", zh: "保護" },
-                { en: "rhino", zh: "犀牛" }, { en: "rhubarb", zh: "大黃" }, { en: "whistle", zh: "哨子" }
+                { en: "commander", zh: "指揮官" }, { en: "oxygen", zh: "氧氣" }, { en: "fuel", zh: "燃料" },
+                { en: "screen", zh: "螢幕" }, { en: "engine", zh: "引擎" }, { en: "breathe", zh: "呼吸" },
+                { en: "solution", zh: "解決方法" }, { en: "secret", zh: "祕密" }, { en: "spacecraft", zh: "太空船" },
+                { en: "percentage", zh: "百分比" }, { en: "tourist", zh: "觀光客" }, { en: "research", zh: "研究" },
+                { en: "vehicle", zh: "交通工具" }, { en: "waste", zh: "浪費/廢棄物" }, { en: "another", zh: "另一個" }
             ],
-            "Week 18": [
-                { en: "job fair", zh: "就業博覽會" }, { en: "architect", zh: "建築師" }, { en: "bold", zh: "大膽的" },
-                { en: "vet", zh: "獸醫" }, { en: "farmer", zh: "農夫" }, { en: "police officer", zh: "警察" },
-                { en: "graphic designer", zh: "平面設計師" }, { en: "bank teller", zh: "銀行行員" }, { en: "computer programmer", zh: "電腦程式設計師" },
-                { en: "conservationist", zh: "保育人士" }, { en: "mechanic", zh: "技工" }, { en: "picture", zh: "圖片" },
-                { en: "programming", zh: "程式設計" }, { en: "treasure", zh: "寶藏" }, { en: "measure", zh: "測量" }
+            "Week 14": [
+                { en: "seat", zh: "座位" }, { en: "energy", zh: "能源/能量" }, { en: "recycle", zh: "回收" },
+                { en: "uniform", zh: "制服" }, { en: "electric", zh: "電的" }, { en: "feature", zh: "特色" },
+                { en: "present", zh: "禮物/呈現" }, { en: "improvement", zh: "改善" }, { en: "suggestion", zh: "建議" },
+                { en: "brochure", zh: "手冊" }, { en: "signature", zh: "簽名" }, { en: "tight", zh: "緊的" },
+                { en: "impossible", zh: "不可能的" }, { en: "destroy", zh: "摧毀" }, { en: "adult", zh: "成人" }
             ],
-            "Week 19": [
-                { en: "scientist", zh: "科學家" }, { en: "midwife", zh: "助產士" }, { en: "plumber", zh: "水管工" },
-                { en: "paramedic", zh: "醫護人員" }, { en: "illustrator", zh: "插畫家" }, { en: "challenging", zh: "具挑戰性的" },
-                { en: "indoors", zh: "在室內" }, { en: "college", zh: "大學" }, { en: "application", zh: "申請/應用" },
-                { en: "creative", zh: "有創造力的" }, { en: "take care", zh: "照顧" }, { en: "first aid kit", zh: "急救箱" },
-                { en: "station", zh: "車站" }, { en: "television", zh: "電視" }, { en: "excursion", zh: "遠足" }
+            "Week 15": [
+                { en: "navigator", zh: "導航員" }, { en: "distance", zh: "距離" }, { en: "source", zh: "來源" },
+                { en: "echo", zh: "回音" }, { en: "object", zh: "物體" }, { en: "normally", zh: "通常" },
+                { en: "outer space", zh: "外太空" }, { en: "transportation", zh: "運輸" }, { en: "liquid", zh: "液體" },
+                { en: "solid", zh: "固體" }, { en: "project", zh: "計畫/專題" }, { en: "in the future", zh: "在未來" },
+                { en: "length", zh: "長度" }, { en: "weight", zh: "重量" }, { en: "suddenly", zh: "突然地" }
             ],
-            "Week 20": [
-                { en: "good at", zh: "擅長" }, { en: "equipment", zh: "設備" }, { en: "record", zh: "記錄" },
-                { en: "microphone", zh: "麥克風" }, { en: "voice", zh: "聲音" }, { en: "sound", zh: "聲音" },
-                { en: "rubber band", zh: "橡皮筋" }, { en: "insect", zh: "昆蟲" }, { en: "pesticide", zh: "殺蟲劑" },
-                { en: "disagree", zh: "不同意" }, { en: "rainforest", zh: "雨林" }, { en: "ancient", zh: "古老的" },
-                { en: "dangerous", zh: "危險的" }, { en: "beautiful", zh: "美麗的" }, { en: "helpful", zh: "有幫助的" }
+            // ---------- English Code U4 ----------
+            "Week 22": [
+                { en: "wise", zh: "有智慧的" }, { en: "helpful", zh: "有幫助的" }, { en: "celebration", zh: "慶祝" },
+                { en: "culture", zh: "文化" }, { en: "routine", zh: "例行公事" }, { en: "forwards", zh: "向前" },
+                { en: "backwards", zh: "向後" }, { en: "burn", zh: "燃燒" }, { en: "village", zh: "村莊" },
+                { en: "scream", zh: "尖叫" }, { en: "dragon", zh: "龍" }, { en: "remember", zh: "記得" },
+                { en: "technology", zh: "科技" }, { en: "magical", zh: "有魔法的" }, { en: "noise", zh: "噪音" }
+            ],
+            "Week 23": [
+                { en: "quality", zh: "品質" }, { en: "instruction", zh: "指示/說明" }, { en: "label", zh: "標籤" },
+                { en: "colorful", zh: "多彩的" }, { en: "environment", zh: "環境" }, { en: "shining", zh: "閃耀的" },
+                { en: "coral reef", zh: "珊瑚礁" }, { en: "detail", zh: "細節" }, { en: "ceremony", zh: "典禮" },
+                { en: "dart", zh: "飛鏢" }, { en: "edge", zh: "邊緣" }, { en: "eclipse", zh: "日蝕/月蝕" },
+                { en: "jet plane", zh: "噴射機" }, { en: "flight", zh: "飛行/班機" }, { en: "average", zh: "平均的" }
+            ],
+            "Week 24": [
+                { en: "origin", zh: "起源" }, { en: "continue", zh: "繼續" }, { en: "equal", zh: "相等的" },
+                { en: "liter", zh: "公升" }, { en: "supper", zh: "晚餐" }, { en: "event", zh: "事件/活動" },
+                { en: "witness", zh: "目擊者" }, { en: "statement", zh: "陳述" }, { en: "push", zh: "推" },
+                { en: "greedy", zh: "貪心的" }, { en: "scared", zh: "害怕的" }, { en: "traditional", zh: "傳統的" },
+                { en: "dangerous", zh: "危險的" }, { en: "brave", zh: "勇敢的" }, { en: "price", zh: "價格" }
             ]
         };
 
         const sentenceData = {
+            // Welcome Unit
             "Week 1": [
-                "We visited a beach with big rocks.",
-                "There were lots of big waves.",
-                "I went to Florida on vacation."
+                "Where are you from? I'm from Ecuador.",
+                "Where is your aunt from? She's from Ecuador.",
+                "When's your birthday? It's on March 31st.",
+                "When's your uncle's birthday? It's on January 10th."
+            ],
+            // Unit 1
+            "Week 2": [
+                "Dan is going to make a camp.",
+                "He isn't going to use branches."
+            ],
+            "Week 3": [
+                "Clare and Pearl are going to use branches.",
+                "They aren't going to use leaves."
             ],
             "Week 4": [
-                "My brother bought ice cream for breakfast.",
-                "Did you go to the beach?",
-                "Yes, we did. No, we didn't."
+                "We don't have a sailboat now.",
+                "What are we going to do?"
             ],
             "Week 5": [
-                "We didn't have an eraser.",
-                "What did you do yesterday?",
-                "I swam in the ocean."
+                "Let's make an SOS message.",
+                "That's north, so the river is flowing east."
             ],
+            // Unit 2
             "Week 7": [
-                "I have some rice and pasta.",
-                "I don't have any bread.",
-                "We have some bread."
+                "The players kick the ball.",
+                "The players kicked the ball."
             ],
             "Week 8": [
-                "Are there any bananas in the basket? Yes, there are.",
-                "There aren't any potatoes.",
-                "There isn't much pizza left."
+                "The players wore protection on their heads for the ball game.",
+                "The players wear protection on their legs for soccer."
             ],
             "Week 9": [
-                "Do you have any mangoes?",
-                "No, I don't have any mangoes.",
-                "I don't have any carrots."
+                "When could you swim?",
+                "I could swim when I was six."
             ],
-            "Week 11": [
-                "What are you going to do?",
-                "I'm going to plant some plants.",
-                "They want to save the planet."
+            "Week 10": [
+                "When did you learn to read?",
+                "When I was six. That's four years ago."
             ],
+            // Unit 3
             "Week 12": [
-                "What's he going to do?",
-                "He isn't going to waste water.",
-                "My dad doesn't want to have a picnic."
+                "We will live on a space colony.",
+                "We won't need fuel."
             ],
             "Week 13": [
-                "What would you like to do every day?",
-                "I would like to reduce the water I use.",
-                "She'd like to protect wildlife."
+                "Will we recycle our waste?",
+                "Yes, we will. / No, we won't."
             ],
-            "Week 18": [
-                "She enjoys doing her job.",
-                "We don't like playing sports.",
-                "They love eating carrots."
+            "Week 14": [
+                "Where will you live?",
+                "What will you eat?"
             ],
-            "Week 19": [
-                "Do you enjoy going shopping?",
-                "Yes, I do. No, I don't.",
-                "She doesn't enjoy going to the mall."
+            "Week 15": [
+                "When will you arrive?",
+                "Who will you see?"
             ],
-            "Week 20": [
-                "Why do you want to be an audio engineer?",
-                "Because I enjoy playing music.",
-                "Why is he studying English?"
+            // Unit 4
+            "Week 22": [
+                "The dragon was flying.",
+                "They weren't eating."
+            ],
+            "Week 23": [
+                "Was the dragon swimming? Yes, it was. / No, it wasn't.",
+                "What were you doing when the fire started?"
+            ],
+            "Week 24": [
+                "I was swimming in the pool when the fire started.",
+                "I wasn't eating when the fire started."
             ]
         };
 
+        // 複習週 / 考試週說明 (這些週沒有新進度，只顯示在首頁提示)
+        const weekNotes = {
+            6:  "Review U1 words / sentences",
+            11: "Review U2・單元考週",
+            16: "Review U3 words / sentences",
+            17: "Review U1–U2・English Expo 彩排",
+            18: "Review U1–U2・English Expo",
+            19: "Review U1–3・English Expo",
+            20: "Review U1–3 words",
+            21: "Final Test 期末考",
+            25: "Review U4 words / Unit 3–4 sentences",
+            26: "Review U1–4 words / sentences"
+        };
+
+        // --- 動詞三態 (L3 & L4 Verb List, orange-movers) ---
+        const verbData = [
+            { v: "be", p: "was / were", pp: "been", zh: "是" },
+            { v: "bear", p: "bore", pp: "born", zh: "忍受；生(小孩)" },
+            { v: "become", p: "became", pp: "become", zh: "變成" },
+            { v: "begin", p: "began", pp: "begun", zh: "開始" },
+            { v: "bite", p: "bit", pp: "bitten", zh: "咬" },
+            { v: "break", p: "broke", pp: "broken", zh: "打破" },
+            { v: "bring", p: "brought", pp: "brought", zh: "帶來" },
+            { v: "build", p: "built", pp: "built", zh: "建造" },
+            { v: "burn", p: "burnt", pp: "burnt", zh: "燃燒" },
+            { v: "buy", p: "bought", pp: "bought", zh: "買" },
+            { v: "blow", p: "blew", pp: "blown", zh: "吹" },
+            { v: "catch", p: "caught", pp: "caught", zh: "抓住" },
+            { v: "can", p: "could", pp: "could", zh: "能夠" },
+            { v: "come", p: "came", pp: "come", zh: "來" },
+            { v: "choose", p: "chose", pp: "chosen", zh: "選擇" },
+            { v: "cost", p: "cost", pp: "cost", zh: "花費(錢)" },
+            { v: "cut", p: "cut", pp: "cut", zh: "切" },
+            { v: "do", p: "did", pp: "done", zh: "做" },
+            { v: "draw", p: "drew", pp: "drawn", zh: "畫" },
+            { v: "dream", p: "dreamed / dreamt", pp: "dreamed / dreamt", zh: "做夢" },
+            { v: "drink", p: "drank", pp: "drunk", zh: "喝" },
+            { v: "drive", p: "drove", pp: "driven", zh: "開車" },
+            { v: "eat", p: "ate", pp: "eaten", zh: "吃" },
+            { v: "fall", p: "fell", pp: "fallen", zh: "落下" },
+            { v: "feed", p: "fed", pp: "fed", zh: "餵食" },
+            { v: "feel", p: "felt", pp: "felt", zh: "感覺" },
+            { v: "find", p: "found", pp: "found", zh: "找到" },
+            { v: "fly", p: "flew", pp: "flown", zh: "飛" },
+            { v: "forget", p: "forgot", pp: "forgotten", zh: "忘記" },
+            { v: "get", p: "got", pp: "got(ten)", zh: "得到" },
+            { v: "give", p: "gave", pp: "given", zh: "給" },
+            { v: "go", p: "went", pp: "gone", zh: "去" },
+            { v: "grow", p: "grew", pp: "grown", zh: "成長" },
+            { v: "have", p: "had", pp: "had", zh: "有" },
+            { v: "hear", p: "heard", pp: "heard", zh: "聽見" },
+            { v: "hide", p: "hid", pp: "hidden", zh: "躲藏" },
+            { v: "hit", p: "hit", pp: "hit", zh: "打擊" },
+            { v: "hold", p: "held", pp: "held", zh: "握住" },
+            { v: "hurt", p: "hurt", pp: "hurt", zh: "受傷/傷害" },
+            { v: "keep", p: "kept", pp: "kept", zh: "保持" },
+            { v: "know", p: "knew", pp: "known", zh: "知道" },
+            { v: "leave", p: "left", pp: "left", zh: "離開" },
+            { v: "learn", p: "learned / learnt", pp: "learned / learnt", zh: "學習" },
+            { v: "let", p: "let", pp: "let", zh: "讓" },
+            { v: "lie", p: "lay", pp: "lain", zh: "躺" },
+            { v: "light", p: "lit", pp: "lit", zh: "點亮" },
+            { v: "lose", p: "lost", pp: "lost", zh: "失去/輸" },
+            { v: "make", p: "made", pp: "made", zh: "製作" },
+            { v: "mean", p: "meant", pp: "meant", zh: "意思是" },
+            { v: "meet", p: "met", pp: "met", zh: "遇見" },
+            { v: "pay", p: "paid", pp: "paid", zh: "付錢" },
+            { v: "put", p: "put", pp: "put", zh: "放置" },
+            { v: "quit", p: "quit(ted)", pp: "quit(ted)", zh: "放棄/停止" },
+            { v: "read", p: "read", pp: "read", zh: "閱讀" },
+            { v: "ride", p: "rode", pp: "ridden", zh: "騎" },
+            { v: "ring", p: "rang", pp: "rung", zh: "響鈴" },
+            { v: "run", p: "ran", pp: "run", zh: "跑" },
+            { v: "say", p: "said", pp: "said", zh: "說" },
+            { v: "see", p: "saw", pp: "seen", zh: "看見" },
+            { v: "sell", p: "sold", pp: "sold", zh: "賣" },
+            { v: "send", p: "sent", pp: "sent", zh: "寄送" },
+            { v: "shake", p: "shook", pp: "shaken", zh: "搖動" },
+            { v: "shine", p: "shone", pp: "shone", zh: "發光" },
+            { v: "shut", p: "shut", pp: "shut", zh: "關上" },
+            { v: "sing", p: "sang", pp: "sung", zh: "唱歌" },
+            { v: "sit", p: "sat", pp: "sat", zh: "坐" },
+            { v: "sleep", p: "slept", pp: "slept", zh: "睡覺" },
+            { v: "speak", p: "spoke", pp: "spoken", zh: "說話" },
+            { v: "spend", p: "spent", pp: "spent", zh: "花費(時間/錢)" },
+            { v: "spell", p: "spelled", pp: "spelled", zh: "拼字" },
+            { v: "spread", p: "spread", pp: "spread", zh: "散播/塗抹" },
+            { v: "stand", p: "stood", pp: "stood", zh: "站立" },
+            { v: "steal", p: "stole", pp: "stolen", zh: "偷" },
+            { v: "swim", p: "swam", pp: "swum", zh: "游泳" },
+            { v: "take", p: "took", pp: "taken", zh: "拿/帶走" },
+            { v: "teach", p: "taught", pp: "taught", zh: "教" },
+            { v: "tell", p: "told", pp: "told", zh: "告訴" },
+            { v: "think", p: "thought", pp: "thought", zh: "想/認為" },
+            { v: "throw", p: "threw", pp: "thrown", zh: "丟" },
+            { v: "understand", p: "understood", pp: "understood", zh: "了解" },
+            { v: "wake", p: "woke", pp: "woken", zh: "醒來" },
+            { v: "wear", p: "wore", pp: "worn", zh: "穿" },
+            { v: "win", p: "won", pp: "won", zh: "贏" },
+            { v: "write", p: "wrote", pp: "written", zh: "寫" }
+        ];
+        const VERB_GROUP_SIZE = 12;
+
         // --- 狀態管理 ---
-        let currentMode = null; // 'word' 或 'sentence'
-        let currentWeek = null; // 'Week 1', 'Week 4'...
-        let quizType = null; // 'voice' 或 'translation'
-        
+        let currentMode = null; // 'word' / 'sentence' / 'verb' / 'copying'
+        let currentWeek = null; // 'Week 1', 'Week 2'...
+        let quizType = null;    // 'voice' 或 'translation'
+        let currentVerbGroup = null; // 動詞三態的分組編號，'all' 代表全部
+
         let questions = [];
         let currentIndex = 0;
         let currentUtteranceText = ''; // 紀錄目前要念的字 (用來回放)
@@ -327,7 +553,7 @@
         const synth = window.speechSynthesis;
         function speak(text, lang = 'en-US') {
             if (synth.speaking) synth.cancel(); // 停止先前的語音
-            
+
             // 過濾括號內容以利發音 (例如: "(go) surfing" -> "surfing")
             let textToSpeak = text;
             if(lang === 'en-US') {
@@ -336,17 +562,17 @@
 
             const utterThis = new SpeechSynthesisUtterance(textToSpeak);
             utterThis.lang = lang;
-            
+
             // 動態調整語速：如果是短句模式且為英文，調得非常慢 (0.6)，單字則為 (0.8)
             if (currentMode === 'sentence' && lang === 'en-US') {
-                utterThis.rate = 0.6; 
+                utterThis.rate = 0.6;
             } else {
                 utterThis.rate = 0.8;
             }
-            
+
             currentUtteranceText = textToSpeak;
             currentUtteranceLang = lang;
-            
+
             synth.speak(utterThis);
         }
 
@@ -356,7 +582,9 @@
 
         // --- UI 控制 ---
         function hideAllViews() {
-            const views = ['view-home', 'view-select-week', 'view-select-type', 'view-quiz-word', 'view-quiz-sentence', 'view-result', 'view-copying-list'];
+            const views = ['view-home', 'view-select-week', 'view-select-type', 'view-quiz-word',
+                           'view-quiz-sentence', 'view-result', 'view-copying-list',
+                           'view-select-verb', 'view-quiz-verb', 'view-verb-table'];
             views.forEach(v => document.getElementById(v).classList.add('hidden-element'));
         }
 
@@ -374,6 +602,7 @@
             currentMode = null;
             currentWeek = null;
             quizType = null;
+            currentVerbGroup = null;
         }
 
         // --- 流程邏輯 ---
@@ -381,10 +610,16 @@
             currentMode = mode;
             hideAllViews();
             showHomeIcon(true);
-            
+
+            if (mode === 'verb') {
+                renderVerbGroups();
+                document.getElementById('view-select-verb').classList.remove('hidden-element');
+                return;
+            }
+
             const weekGrid = document.getElementById('week-grid');
             weekGrid.innerHTML = '';
-            
+
             // 根據模式取得有資料的 Week (抄寫模式預設用單字週數作為基準)
             const dataToUse = mode === 'sentence' ? sentenceData : wordData;
             const weeks = Object.keys(dataToUse);
@@ -393,7 +628,7 @@
             if (mode === 'word') titleText = '單字：請選擇週數';
             else if (mode === 'sentence') titleText = '短句：請選擇週數';
             else titleText = '抄寫作業：請選擇週數';
-            
+
             document.getElementById('week-title').innerText = titleText;
 
             weeks.forEach(week => {
@@ -410,7 +645,7 @@
         function selectWeek(week) {
             currentWeek = week;
             hideAllViews();
-            
+
             if (currentMode === 'word') {
                 document.getElementById('view-select-type').classList.remove('hidden-element');
             } else if (currentMode === 'sentence') {
@@ -459,20 +694,20 @@
             quizType = type;
             questions = [...wordData[currentWeek]]; // 複製陣列
             // 隨機打亂題目順序
-            questions.sort(() => Math.random() - 0.5); 
+            questions.sort(() => Math.random() - 0.5);
             currentIndex = 0;
-            
+
             hideAllViews();
             document.getElementById('view-quiz-word').classList.remove('hidden-element');
             document.getElementById('word-week-display').innerText = currentWeek;
-            
+
             renderWordQuestion();
         }
 
         function renderWordQuestion() {
             const q = questions[currentIndex];
             document.getElementById('word-progress').innerText = `${currentIndex + 1} / ${questions.length}`;
-            
+
             // 隱藏解答區與下一題按鈕
             document.getElementById('word-answer-area').classList.add('hidden-element');
             document.getElementById('btn-next-word').classList.add('hidden-element');
@@ -497,11 +732,11 @@
             const q = questions[currentIndex];
             document.getElementById('ans-english').innerText = q.en;
             document.getElementById('ans-chinese').innerText = q.zh;
-            
+
             document.getElementById('word-answer-area').classList.remove('hidden-element');
             document.getElementById('btn-show-answer').classList.add('hidden-element');
             document.getElementById('btn-next-word').classList.remove('hidden-element');
-            
+
             // 顯示解答時順便念出英文
             speak(q.en, 'en-US');
         }
@@ -519,11 +754,11 @@
         function startSentenceQuiz() {
             questions = [...sentenceData[currentWeek]];
             currentIndex = 0;
-            
+
             hideAllViews();
             document.getElementById('view-quiz-sentence').classList.remove('hidden-element');
             document.getElementById('sentence-week-display').innerText = currentWeek;
-            
+
             renderSentenceQuestion();
         }
 
@@ -531,9 +766,9 @@
             const sentence = questions[currentIndex];
             document.getElementById('sentence-progress').innerText = `${currentIndex + 1} / ${questions.length}`;
             document.getElementById('sentence-text').innerText = sentence;
-            
+
             speak(sentence, 'en-US');
-            
+
             const nextBtn = document.getElementById('btn-next-sentence');
             if (currentIndex === questions.length - 1) {
                 nextBtn.innerText = "完成測驗 🎉";
@@ -551,6 +786,120 @@
             }
         }
 
+        // --- 動詞三態邏輯 ---
+        function verbGroupCount() {
+            return Math.ceil(verbData.length / VERB_GROUP_SIZE);
+        }
+
+        function verbGroupSlice(groupIndex) {
+            const start = groupIndex * VERB_GROUP_SIZE;
+            return verbData.slice(start, start + VERB_GROUP_SIZE);
+        }
+
+        function renderVerbGroups() {
+            document.getElementById('verb-total').innerText = verbData.length;
+
+            const grid = document.getElementById('verb-group-grid');
+            grid.innerHTML = '';
+
+            for (let i = 0; i < verbGroupCount(); i++) {
+                const group = verbGroupSlice(i);
+                const btn = document.createElement('button');
+                btn.className = 'bounce-click bg-indigo-100 hover:bg-indigo-200 text-indigo-800 font-bold py-3 px-2 rounded-xl border-2 border-indigo-300 transition-colors';
+                btn.innerText = `第 ${i + 1} 組 (${group[0].v} – ${group[group.length - 1].v})`;
+                btn.onclick = () => startVerbQuiz(i);
+                grid.appendChild(btn);
+            }
+
+            const allBtn = document.createElement('button');
+            allBtn.className = 'bounce-click bg-purple-100 hover:bg-purple-200 text-purple-800 font-bold py-3 px-2 rounded-xl border-2 border-purple-300 transition-colors sm:col-span-2';
+            allBtn.innerText = `🎲 全部隨機 (${verbData.length} 題)`;
+            allBtn.onclick = () => startVerbQuiz('all');
+            grid.appendChild(allBtn);
+        }
+
+        function startVerbQuiz(group) {
+            currentMode = 'verb';
+            currentVerbGroup = group;
+
+            questions = group === 'all' ? [...verbData] : [...verbGroupSlice(group)];
+            questions.sort(() => Math.random() - 0.5);
+            currentIndex = 0;
+
+            hideAllViews();
+            showHomeIcon(true);
+            document.getElementById('view-quiz-verb').classList.remove('hidden-element');
+            document.getElementById('verb-group-display').innerText =
+                group === 'all' ? '全部隨機' : `第 ${group + 1} 組`;
+
+            renderVerbQuestion();
+        }
+
+        function renderVerbQuestion() {
+            const q = questions[currentIndex];
+            document.getElementById('verb-progress').innerText = `${currentIndex + 1} / ${questions.length}`;
+
+            document.getElementById('verb-answer-area').classList.add('hidden-element');
+            document.getElementById('btn-next-verb').classList.add('hidden-element');
+            document.getElementById('btn-show-verb-answer').classList.remove('hidden-element');
+
+            document.getElementById('verb-question').innerText = q.v;
+            speak(q.v, 'en-US');
+        }
+
+        function showVerbAnswer() {
+            const q = questions[currentIndex];
+            document.getElementById('verb-ans-v').innerText = q.v;
+            document.getElementById('verb-ans-p').innerText = q.p;
+            document.getElementById('verb-ans-pp').innerText = q.pp;
+            document.getElementById('verb-ans-zh').innerText = q.zh;
+
+            document.getElementById('verb-answer-area').classList.remove('hidden-element');
+            document.getElementById('btn-show-verb-answer').classList.add('hidden-element');
+            document.getElementById('btn-next-verb').classList.remove('hidden-element');
+
+            // 依序念出三態 (把 " / " 換成 ", " 讓語音自然一點)
+            const spoken = `${q.v}, ${q.p}, ${q.pp}`.replace(/\s*\/\s*/g, ', ');
+            speak(spoken, 'en-US');
+        }
+
+        function nextVerbQuestion() {
+            currentIndex++;
+            if (currentIndex < questions.length) {
+                renderVerbQuestion();
+            } else {
+                showResult();
+            }
+        }
+
+        function showVerbTable() {
+            hideAllViews();
+            showHomeIcon(true);
+            document.getElementById('view-verb-table').classList.remove('hidden-element');
+
+            let html = '<table class="w-full text-left text-sm border-collapse">';
+            html += `<thead class="sticky top-0 bg-indigo-100">
+                        <tr>
+                            <th class="p-2 font-black text-indigo-900 border-b-2 border-indigo-300">Verb</th>
+                            <th class="p-2 font-black text-indigo-900 border-b-2 border-indigo-300">Past</th>
+                            <th class="p-2 font-black text-indigo-900 border-b-2 border-indigo-300">P.P.</th>
+                            <th class="p-2 font-black text-indigo-900 border-b-2 border-indigo-300">中文</th>
+                        </tr>
+                     </thead><tbody>`;
+            verbData.forEach((item, i) => {
+                const bg = i % 2 === 0 ? 'bg-white' : 'bg-indigo-50';
+                html += `<tr class="${bg}">
+                            <td class="p-2 font-bold text-gray-900">${item.v}</td>
+                            <td class="p-2 text-indigo-700">${item.p}</td>
+                            <td class="p-2 text-purple-700">${item.pp}</td>
+                            <td class="p-2 text-gray-500">${item.zh}</td>
+                         </tr>`;
+            });
+            html += '</tbody></table>';
+
+            document.getElementById('verb-table-content').innerHTML = html;
+        }
+
         // --- 結束邏輯 ---
         function showResult() {
             hideAllViews();
@@ -561,6 +910,8 @@
         function restartCurrentQuiz() {
             if (currentMode === 'word') {
                 startWordQuiz(quizType);
+            } else if (currentMode === 'verb') {
+                startVerbQuiz(currentVerbGroup);
             } else {
                 startSentenceQuiz();
             }
@@ -568,24 +919,35 @@
 
         // --- 計算與顯示當前週數 ---
         function calculateCurrentWeek() {
-            // 設定基準日：2026/2/22 (注意：JavaScript 的 Date 物件中，月份是從 0 開始，1 代表 2 月)
-            const startDate = new Date(2026, 1, 22);
+            // 基準日：2026/8/7 為 Week 1 的第一天
+            // (注意：JavaScript 的 Date 物件中，月份從 0 開始，7 代表 8 月)
+            const startDate = new Date(2026, 7, 7);
             startDate.setHours(0, 0, 0, 0); // 歸零時間以精確計算天數
-            
+
             const now = new Date();
             now.setHours(0, 0, 0, 0);
-            
+
             // 計算毫秒差並轉換為天數
             const diffTime = now - startDate;
             const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-            
-            // 每 7 天為一週，無條件捨去後 +4 即為目前的週數 (設定 2026/2/22 這週為 Week 4)
-            let currentWeek = Math.floor(diffDays / 7) + 4;
-            
-            // 避免出現小於 1 的週數 (若在基準日的三週前打開)
-            if (currentWeek < 1) currentWeek = 1;
-            
-            document.getElementById('current-week-display').innerText = `Week ${currentWeek}`;
+
+            // 每 7 天為一週
+            let week = Math.floor(diffDays / 7) + 1;
+
+            // 學期為 Week 1 ~ Week 26，超出範圍就夾在邊界
+            if (week < 1) week = 1;
+            if (week > 26) week = 26;
+
+            document.getElementById('current-week-display').innerText = `Week ${week}`;
+
+            // 若為複習週 / 考試週，額外顯示說明
+            const noteEl = document.getElementById('current-week-note');
+            if (weekNotes[week]) {
+                noteEl.innerText = `🔁 ${weekNotes[week]}（本週無新進度，請挑先前的週數複習）`;
+                noteEl.classList.remove('hidden-element');
+            } else {
+                noteEl.classList.add('hidden-element');
+            }
         }
 
         // 網頁載入後執行日期計算
